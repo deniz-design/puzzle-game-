@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Puzzle Cam — Gesture Capture</title>
+<link rel="icon" href="data:," />
 <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
@@ -74,6 +75,26 @@
 
 </div>
 
+<script>
+// app.js is an ES module, and browsers refuse to load modules over file://
+// (CORS). The camera also needs a secure context, which file:// is not.
+// Without this check the page just hangs on the loading overlay forever, so
+// fail loudly with instructions instead.
+if (window.location.protocol === "file:") {
+  document.addEventListener("DOMContentLoaded", function () {
+    var overlay = document.getElementById("loadingOverlay");
+    var text = document.getElementById("loaderText");
+    if (overlay) overlay.classList.remove("hidden");
+    if (text) {
+      text.style.color = "#e0533d";
+      text.innerHTML =
+        "Open this over a local server, not by double-clicking the file.<br/><br/>" +
+        "Run <code>start.bat</code> in this folder, then open<br/>" +
+        "<code>http://127.0.0.1:8000</code>.";
+    }
+  });
+}
+</script>
 <script type="module" src="./app.js"></script>
 </body>
 </html>
