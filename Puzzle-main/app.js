@@ -1,7 +1,7 @@
 import {
   FilesetResolver,
   HandLandmarker,
-} from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14";
+} from "./vendor/vision_bundle.mjs";
 
 const LM = {
   WRIST: 0,
@@ -273,11 +273,9 @@ async function initHandLandmarker() {
   let vision;
   try {
     vision = await withTimeout(
-      FilesetResolver.forVisionTasks(
-        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm"
-      ),
+      FilesetResolver.forVisionTasks("./vendor/wasm"),
       LOAD_TIMEOUT_MS,
-      "Timeout loading MediaPipe runtime (WASM). Check your internet or if cdn.jsdelivr.net is blocked."
+      "Timeout loading the local MediaPipe runtime (WASM). Make sure vendor/wasm/ exists and is being served."
     );
   } catch (err) {
     throw err;
@@ -287,8 +285,7 @@ async function initHandLandmarker() {
     const handLandmarker = await withTimeout(
       HandLandmarker.createFromOptions(vision, {
         baseOptions: {
-          modelAssetPath:
-            "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task",
+          modelAssetPath: "./models/hand_landmarker.task",
           delegate: "GPU",
         },
         runningMode: "video",
@@ -298,7 +295,7 @@ async function initHandLandmarker() {
         minTrackingConfidence: 0.6,
       }),
       LOAD_TIMEOUT_MS,
-      "Timeout downloading HandLandmarker model (~10MB) with GPU."
+      "Timeout loading the local HandLandmarker model with GPU. Make sure models/hand_landmarker.task exists."
     );
     return handLandmarker;
   } catch (gpuErr) {
@@ -309,8 +306,7 @@ async function initHandLandmarker() {
     const handLandmarker = await withTimeout(
       HandLandmarker.createFromOptions(vision, {
         baseOptions: {
-          modelAssetPath:
-            "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task",
+          modelAssetPath: "./models/hand_landmarker.task",
           delegate: "CPU",
         },
         runningMode: "video",
@@ -320,7 +316,7 @@ async function initHandLandmarker() {
         minTrackingConfidence: 0.6,
       }),
       LOAD_TIMEOUT_MS,
-      "Timeout downloading HandLandmarker model (~10MB) even with CPU. Check your connection or if storage.googleapis.com is blocked."
+      "Timeout loading the local HandLandmarker model with CPU. Make sure models/hand_landmarker.task exists."
     );
     return handLandmarker;
   } catch (cpuErr) {
